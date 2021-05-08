@@ -32,18 +32,29 @@
 
 ///////////////////////////////////////////////////////////////////////////
 //LIBRARIES
-#include <pitches.h>
+#include </home/osvaldo/Desarrollo/GitHub/wateringplants-bot/wateringplants-bot/Code/sketch_may05a/pitches.h>
 ///////////////////////////////////////////////////////////////////////////
 
 
 
 ///////////////////////////////////////////////////////////////////////////
-//VARIABLES
+//CONSTANTES
 const int redLed   = 13;
 const int redGreen = 12;
 const int redBlue  = 11;
 const int buzzer   = 10;
 const int lightSen = A0;
+const int humiditySen1 = A1;
+const int humiditySen2 = A2;
+const int humiditySen3 = A3;
+const int humiditySen4 = A4;
+const int humiditySen5 = A5;
+///////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+//VARIABLES
+int secuence;
+int humidity;
 ///////////////////////////////////////////////////////////////////////////
 
 
@@ -51,7 +62,7 @@ const int lightSen = A0;
 ///////////////////////////////////////////////////////////////////////////
 //START STATUS
 void setup() {
-  diviceStatus(1);
+    Serial.begin(9600);
 }
 ///////////////////////////////////////////////////////////////////////////
 
@@ -60,7 +71,42 @@ void setup() {
 ///////////////////////////////////////////////////////////////////////////
 //LOOP STATUS
 void loop() {
+  delay(600000);
+    if ( checkHumiditySenson( humiditySen1 ) ){
+      diviceStatus( 1 );
+    }else{
+      diviceStatus( 2 );
+    }
+ 
+  
+  delay(600000);
+    if ( checkHumiditySenson( humiditySen2 ) ){
+      diviceStatus( 1 );
+    }else{
+      diviceStatus( 2 );
+    }
 
+  delay(600000);
+    if ( checkHumiditySenson( humiditySen3 ) ){
+      diviceStatus( 1 );
+    }else{
+      diviceStatus( 2 );
+    }
+
+  delay(600000);
+    if ( checkHumiditySenson( humiditySen4 ) ){
+      diviceStatus( 1 );
+    }else{
+      diviceStatus( 2 );
+    }
+
+  delay(600000);
+    if ( checkHumiditySenson( humiditySen5 ) ){
+      diviceStatus( 1 );
+    }else{
+      diviceStatus( 2 );
+    }
+    
 }
 ///////////////////////////////////////////////////////////////////////////
 
@@ -70,6 +116,28 @@ void loop() {
 
 
 //
+boolean checkHumiditySenson (int humiditySen){
+  secuence = secuence + 1;
+  humidity = analogRead(humiditySen);   //Read analog value 
+  humidity = constrain(humidity,400,1023);  //Keep the ranges!
+  humidity = map(humidity,400,1023,100,0);  //Map value : 400 will be 100 and 1023 will be 0
+  Serial.print("Secuence: ");
+  Serial.print( humiditySen );
+  Serial.print( " - " );
+  Serial.print( secuence );
+  Serial.print("\n");
+  Serial.print("Soil humidity: ");
+  Serial.print(humidity);
+  Serial.print("%");
+  Serial.print("\n");
+  if( humidity > 55 ){
+    return  true;
+  }else{
+    return  false;
+  }
+}
+
+
 boolean ligthStatus(){
    int analogValue = analogRead(lightSen);
   if(analogValue < 50){            
@@ -86,14 +154,14 @@ boolean ligthStatus(){
 void diviceStatus(int code){
   
   if ( code == 3)  {
-    digitalWrite(redLed, HIGH);
-    digitalWrite(redGreen, LOW);
-    digitalWrite(redBlue, LOW);
-    playAlarm();
-  } else if ( code == 2 ) {
     digitalWrite(redLed, LOW);
     digitalWrite(redGreen, LOW);
     digitalWrite(redBlue, HIGH);
+    playAlarm();
+  } else if ( code == 2 ) {
+    digitalWrite(redLed, HIGH);
+    digitalWrite(redGreen, LOW);
+    digitalWrite(redBlue, LOW);
     playSong();
   } else if ( code == 1 ) {  
     digitalWrite(redLed, LOW);
